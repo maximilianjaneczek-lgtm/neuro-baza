@@ -54,15 +54,14 @@
                 <p id="question-text" class="text-lg font-semibold text-white leading-relaxed"></p>
             </div>
 
-            <div id="options-container" class="space-y-3 mb-6">
-                </div>
+            <div id="options-container" class="space-y-3 mb-6"></div>
 
             <div class="flex justify-between items-center border-t border-gray-700 pt-4">
                 <button id="prev-btn" class="bg-gray-700 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
                     Poprzednie
                 </button>
                 <button id="flag-btn" class="text-yellow-500 hover:text-yellow-400 text-sm flex items-center gap-1">
-                    ⭐ Flaguj (Trudne)
+                    ☆ Flaguj (Trudne)
                 </button>
                 <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition-colors">
                     Następne
@@ -125,9 +124,8 @@
         };
 
         // Inicjalizacja Firebase & Firestore
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2026"
-
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app, "Baza neuro"); // <-- ZMIANA: Poprawiona nazwa bazy danych na serwerze
 
         // Stan aplikacji
         let currentQuestions = [];
@@ -154,7 +152,7 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
         const nextBtn = document.getElementById('next-btn');
         const flagBtn = document.getElementById('flag-btn');
         
-        // Obsługa uruchamiania testu (Pobieranie jednorazowe getDocs chroniące przed niechcianym przeładowywaniem w czasie rzeczywistym)
+        // Obsługa uruchamiania testu
         startBtn.addEventListener('click', async () => {
             const selectedExam = examSelect.value;
             if (!selectedExam) {
@@ -166,14 +164,12 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
             loadingScreen.classList.remove('hidden');
 
             try {
-                // Pobieramy kolekcję odpowiadającą wybranemu roku/egzaminowi
                 const querySnapshot = await getDocs(collection(db, `egzaminy/${selectedExam}/pytania`));
                 currentQuestions = [];
                 querySnapshot.forEach((doc) => {
                     currentQuestions.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Sortowanie pytań, aby zapewnić, że żadne nie zostanie pominięte ani pomieszane
                 currentQuestions.sort((a, b) => (a.order || 0) - (b.order || 0));
 
                 if (currentQuestions.length === 0) {
@@ -183,7 +179,6 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
                     return;
                 }
 
-                // Reset stanu quizu
                 currentQuestionIndex = 0;
                 userAnswers = {};
                 flaggedQuestions.clear();
@@ -205,23 +200,19 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
             if (currentQuestions.length === 0) return;
             const q = currentQuestions[currentQuestionIndex];
 
-            // Aktualizacja paska postępu i upewnienie się o ciągłości
             progressText.innerText = `Pytanie ${currentQuestionIndex + 1} z ${currentQuestions.length}`;
             const totalAnswered = Object.keys(userAnswers).length;
             const progressPercent = Math.round((totalAnswered / currentQuestions.length) * 100);
             answeredCount.innerText = `Udzielone odpowiedzi: ${totalAnswered}/${currentQuestions.length} (${progressPercent}%)`;
             progressBar.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
 
-            // Treść pytania
             questionText.innerText = `${currentQuestionIndex + 1}. ${q.text}`;
 
-            // Opcje odpowiedzi
             optionsContainer.innerHTML = '';
             q.options.forEach((option, idx) => {
                 const btn = document.createElement('button');
                 btn.className = `w-full text-left p-4 rounded-lg border transition-all flex items-center justify-between text-sm sm:text-base `;
                 
-                // Sprawdzanie czy użytkownik już zaznaczył tę opcję
                 if (userAnswers[currentQuestionIndex] === idx) {
                     btn.className += " bg-blue-900/50 border-blue-500 text-white font-medium ring-2 ring-blue-500/20";
                 } else {
@@ -233,7 +224,6 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
                 optionsContainer.appendChild(btn);
             });
 
-            // Stan przycisku flagowania
             if (flaggedQuestions.has(currentQuestionIndex)) {
                 flagBtn.innerText = "⭐ Sflagowane";
                 flagBtn.className = "text-yellow-400 font-bold text-sm flex items-center gap-1";
@@ -242,7 +232,6 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
                 flagBtn.className = "text-gray-400 hover:text-yellow-400 text-sm flex items-center gap-1";
             }
 
-            // Stan przycisków nawigacji
             prevBtn.disabled = currentQuestionIndex === 0;
             if (currentQuestionIndex === currentQuestions.length - 1) {
                 nextBtn.innerText = "Zakończ Test";
@@ -258,7 +247,6 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
             renderQuestion();
         }
 
-        // Nawigacja
         prevBtn.addEventListener('click', () => {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
@@ -271,7 +259,6 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
                 currentQuestionIndex++;
                 renderQuestion();
             } else {
-                // Upewniamy się, czy użytkownik nie pominął żadnego pytania przed zakończeniem
                 const totalAnswered = Object.keys(userAnswers).length;
                 if (totalAnswered < currentQuestions.length) {
                     const confirmEnd = confirm(`⚠️ Uwaga! Nie odpowiedziałeś na wszystkie pytania (Udzielone: ${totalAnswered} z ${currentQuestions.length}). Czy na pewno chcesz zakończyć test? Pomięte pytania zostaną uznane za błędne.`);
@@ -290,7 +277,6 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
             renderQuestion();
         });
 
-        // Podsumowanie i Niespodzianka dla wyniku > 65%
         function finishQuiz() {
             quizScreen.classList.add('hidden');
             resultScreen.classList.remove('hidden');
@@ -298,8 +284,6 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
             let correctCount = 0;
             currentQuestions.forEach((q, idx) => {
                 if (userAnswers[idx] !== undefined) {
-                    const selectedText = q.options[userAnswers[idx]].toLowerCase();
-                    // Prosty walidator poprawności na podstawie pola 'correct' lub dopasowania tekstu klucza
                     if (q.correct !== undefined && userAnswers[idx] === q.correct) {
                         correctCount++;
                     }
@@ -310,10 +294,8 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
             document.getElementById('score-percentage').innerText = `${scorePercent}%`;
             document.getElementById('score-raw').innerText = `Zdobyłeś ${correctCount} na ${currentQuestions.length} punktów.`;
 
-            // Warunek niespodzianki (> 65%)
             if (scorePercent >= 65) {
                 document.getElementById('surprise-box').classList.remove('hidden');
-                // Niespodzianka: Wystrzał konfetti na ekranie!
                 confetti({
                     particleCount: 150,
                     spread: 80,
@@ -329,11 +311,8 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
             selectionScreen.classList.remove('hidden');
         });
 
-
-        // ================= SECURITY & CONVERTER (Shift+Ctrl+A) =================
-
+        // Panel Admina i Parser (Ctrl+Shift+A)
         window.addEventListener('keydown', (e) => {
-            // Skrót klawiszowy aktywacyjny zadany przez użytkownika
             if (e.shiftKey && e.ctrlKey && e.key.toLowerCase() === 'a') {
                 e.preventDefault();
                 const password = prompt("Wprowadź hasło administratora bazy:");
@@ -349,7 +328,6 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
             adminPanel.classList.add('hidden');
         });
 
-        // Inteligentny parser/konwerter tekstu na obiekt bazy danych Firestore
         document.getElementById('upload-btn').addEventListener('click', async () => {
             const examId = document.getElementById('admin-exam-id').value.trim();
             const rawText = document.getElementById('admin-raw-text').value;
@@ -362,41 +340,33 @@ const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2
 
             statusSpan.innerText = "Przetwarzanie i konwersja...";
 
-            // Architektura parsera: Dzieli wklejony tekst na bloki pytań i wyodrębnia opcje
             const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             let questionsToUpload = [];
-            
             let currentQ = null;
             let orderCounter = 1;
 
-            // Przykład prostego i elastycznego podziału linii
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
                 
-                // Jeśli linia zaczyna się cyfrą, traktujemy to jako nowe pytanie
                 if (/^\d+[\.\)]/.test(line)) {
                     if (currentQ) questionsToUpload.push(currentQ);
                     currentQ = {
                         text: line.replace(/^\d+[\.\)]\s*/, ''),
                         options: [],
-                        correct: 0, // Domyślnie pierwsza jako poprawna lub do dopasowania
+                        correct: 0,
                         order: orderCounter++
                     };
                 } else if (currentQ) {
-                    // Sprawdzanie czy linia jest oznaczeniem poprawnej odpowiedzi np. "Odp: A"
                     if (line.toLowerCase().startsWith('odp:') || line.toLowerCase().startsWith('poprawna:')) {
-                        // Mapowanie literowe A=0, B=1, C=2 itp.
                         const letter = line.replace(/[^a-eA-E]/g, '').toUpperCase();
                         if (letter) currentQ.correct = letter.charCodeAt(0) - 65;
                     } else {
-                        // Dodawanie jako opcja wyboru A, B, C, D lub E
                         currentQ.options.push(line);
                     }
                 }
             }
             if (currentQ) questionsToUpload.push(currentQ);
 
-            // Wrzucanie sparsowanych obiektów prosto do Firebase Firestore
             try {
                 let uploadedCount = 0;
                 for (const q of questionsToUpload) {
