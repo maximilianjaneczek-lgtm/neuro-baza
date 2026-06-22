@@ -3,242 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neurologia 2026 - Digital Exam Reader</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^3/dist/tailwind.min.css">
+    <title>SKRYPT MAXA - Tester Baz Neurologicznych</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        body {
-            background-color: #0f172a;
-            margin: 0;
-            min-height: 100vh;
-            font-family: 'Urbanist', sans-serif;
-            color: #daffde;
-        }
-        .slide-container {
-            width: 100%;
-            max-width: 1280px;
-            min-height: 720px;
-            background-color: #000;
-            margin: 40px auto;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border-radius: 24px;
-            padding: 60px;
-            display: none;
-            border: 1px solid rgba(218, 255, 222, 0.1);
-        }
-        .slide-container.active { display: flex; flex-direction: column; }
-        .bg-design {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .gradient-blob {
-            position: absolute;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(222, 255, 154, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
-            filter: blur(80px);
-        }
-        h1, h2, .slide-title {
-            color: #f5f5f5;
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            z-index: 1;
-        }
-        h1 { font-size: 64px; line-height: 1.2; font-weight: 700; text-align: center; }
-        .slide-title { font-size: 40px; font-weight: 400; margin-bottom: 40px; text-align: left; width: 100%; }
-        .accent { color: #deff9a; }
-        .content-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; width: 100%; z-index: 1; }
-        .glass-box {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid rgba(218, 255, 222, 0.1);
-            border-radius: 24px;
-            padding: 40px;
-            backdrop-filter: blur(10px);
-        }
-        .btn-consulting {
-            background-color: #deff9a;
-            color: #000;
-            font-weight: 700;
-            padding: 18px 40px;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-        }
-        .btn-consulting:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(222, 255, 154, 0.2); }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #deff9a;
-            color: #deff9a;
-            padding: 12px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-outline:hover { background: rgba(222, 255, 154, 0.1); }
-        .option-btn {
-            width: 100%;
-            text-align: left;
-            padding: 18px 24px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(222, 255, 154, 0.2);
-            border-radius: 12px;
-            color: #daffde;
-            margin-bottom: 12px;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        .option-btn:hover { background: rgba(222, 255, 154, 0.1); border-color: #deff9a; }
-        .option-btn.selected { background: #deff9a; color: #000; font-weight: 700; border-color: #deff9a; }
-        .progress-wrapper { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 40px; }
-        .progress-fill { height: 100%; background: #deff9a; width: 0%; transition: width 0.3s ease; border-radius: 3px; }
-        #admin-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 100;
-            display: none; align-items: center; justify-content: center;
-        }
-    </style>
 </head>
-<body>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
 
-    <div class="slide-container active" id="slide-welcome">
-        <div class="bg-design">
-            <div class="gradient-blob" style="top: -100px; right: -100px;"></div>
-            <div class="gradient-blob" style="bottom: -100px; left: -100px;"></div>
-        </div>
-        <div class="content-area text-center">
-            <h1>NEUROLOGIA <span class="accent">2026</span></h1>
-            <p class="mt-6 max-w-2xl mx-auto opacity-80 text-xl">
-                Ekspercka platforma weryfikacji wiedzy medycznej. Dostęp do archiwalnych baz egzaminacyjnych w standardzie Premium.
-            </p>
-            <div class="mt-12">
-                <button class="btn-consulting" onclick="showSlide('slide-select')">Rozpocznij Analizę</button>
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-blue-500 tracking-tight mb-2">NEURO-QUIZ</h1>
+            <p class="text-gray-400">Przeglądarka i tester pytań z egzaminów archiwalnych</p>
+        </header>
+
+        <section id="selection-screen" class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 mb-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-200">Wybierz bazę egzaminacyjną:</h2>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <select id="exam-select" class="bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1">
+                    <option value="">-- Wybierz egzamin --</option>
+                    <option value="2026_A_1">Neurologia 2026 Cykl A - I Termin</option>
+                    <option value="2026_A_2">Neurologia 2026 Cykl A - II Termin</option>
+                    <option value="2025_A_1">Neurologia 2025 Cykl A - I Termin</option>
+                    <option value="2025_B_1">Neurologia 2025 Cykl B - I Termin</option>
+                    <option value="2024_A_1">Neurologia 2024 Cykl A - I Termin</option>
+                    <option value="2024_A_2">Neurologia 2024 Cykl A - II Termin</option>
+                    <option value="2024_B_1">Neurologia 2024 Cykl B - I Termin</option>
+                    <option value="2023_B_1">Neurologia 2023 Cykl B - I Termin</option>
+                    <option value="Ankieta">Ankieta Neurologia</option>
+                </select>
+                <button id="start-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow">
+                    Rozpocznij Test
+                </button>
             </div>
-        </div>
-        <div class="absolute bottom-10 left-10 opacity-30 text-sm">
-            PRIVATE & CONFIDENTIAL | INTERNAL USE ONLY
-        </div>
-    </div>
+        </section>
 
-    <div class="slide-container" id="slide-select">
-        <h2 class="slide-title">Wybór Jednostki Badawczej</h2>
-        <div class="content-area">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="glass-box">
-                    <h3 class="text-2xl font-bold mb-4 text-white">Dostępne Bazy</h3>
-                    <p class="mb-8 opacity-70">Wybierz rok i termin egzaminu, aby wygenerować arkusz testowy.</p>
-                    <select id="exam-select" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl text-white outline-none focus:border-green-400 mb-6 text-lg">
-                        <option value="2026_A_1">Neurologia 2026 Cykl A - I Termin</option>
-                        <option value="2026_A_2">Neurologia 2026 Cykl A - II Termin</option>
-                    </select>
-                    <button class="btn-consulting w-full" id="start-btn">Generuj Test</button>
-                </div>
-                <div class="flex flex-col justify-center space-y-6">
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 bg-green-200 text-black rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
-                        <div>
-                            <h4 class="font-bold text-white text-lg">Baza Synchronizowana Cloud</h4>
-                            <p class="text-sm opacity-60">Pytania pobierane w czasie rzeczywistym z Twojego repozytorium Firestore.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 bg-green-200 text-black rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
-                        <div>
-                            <h4 class="font-bold text-white text-lg">Algorytm Ciągłości Sesji</h4>
-                            <p class="text-sm opacity-60">System pilnuje postępu i upewnia się, że żadne pytanie nie zostanie przypadkowo pominięte.</p>
-                        </div>
-                    </div>
-                </div>
+        <div id="loading-screen" class="hidden text-center py-10">
+            <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-blue-500 rounded-full" role="status"></div>
+            <p class="text-gray-400 mt-2">Pobieranie pytań z bazy Firebase...</p>
+        </div>
+
+        <main id="quiz-screen" class="hidden bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+            <div class="flex justify-between items-center mb-4 text-sm text-gray-400">
+                <span id="progress-text">Pytanie 1 z 100</span>
+                <span id="answered-count" class="bg-gray-700 px-3 py-1 rounded-full text-blue-400">Postęp: 0%</span>
             </div>
-        </div>
-    </div>
-
-    <div class="slide-container" id="slide-quiz">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="slide-title m-0">Arkusze Badawcze</h2>
-            <div id="q-counter" class="accent font-bold text-xl">1 / 100</div>
-        </div>
-        <div class="progress-wrapper">
-            <div id="progress-bar" class="progress-fill"></div>
-        </div>
-        <div class="content-area">
-            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                <div class="lg:col-span-3">
-                    <div class="glass-box min-h-full flex items-center">
-                        <p id="q-text" class="text-2xl font-bold leading-relaxed text-white"></p>
-                    </div>
-                </div>
-                <div class="lg:col-span-2">
-                    <div id="options-container" class="flex flex-col justify-start"></div>
-                </div>
+            <div class="w-full bg-gray-700 rounded-full h-2 mb-6">
+                <div id="progress-bar" class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
             </div>
-        </div>
-        <div class="flex justify-between mt-10 border-t border-slate-800 pt-6">
-            <button class="btn-outline" onclick="prevQuestion()">Poprzednie</button>
-            <button class="btn-consulting" id="next-btn" onclick="nextQuestion()">Następne</button>
-        </div>
-    </div>
 
-    <div class="slide-container" id="slide-result">
-        <h2 class="slide-title">Podsumowanie Wyników</h2>
-        <div class="content-area text-center">
             <div class="mb-6">
-                <span class="text-9xl font-bold accent" id="final-percent">0%</span>
+                <p id="question-text" class="text-lg font-semibold text-white leading-relaxed"></p>
             </div>
-            <h3 class="text-3xl font-bold text-white mb-4" id="result-status">Ocena: Niewystarczająca</h3>
-            <p class="text-xl mb-12 opacity-80" id="final-score">Zdobyłeś 0 na 0 punktów.</p>
-            <div id="surprise-area" class="hidden">
-                <div class="glass-box bg-green-900 bg-opacity-20 border-green-500 border-opacity-50 p-6 inline-block">
-                    <p class="text-green-400 font-bold m-0 italic text-lg">🎉 GRATULACJE! Uzyskałeś status eksperta. Laur chirurga przyznany! 👑</p>
+
+            <div id="options-container" class="space-y-3 mb-6">
+                </div>
+
+            <div class="flex justify-between items-center border-t border-gray-700 pt-4">
+                <button id="prev-btn" class="bg-gray-700 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
+                    Poprzednie
+                </button>
+                <button id="flag-btn" class="text-yellow-500 hover:text-yellow-400 text-sm flex items-center gap-1">
+                    ⭐ Flaguj (Trudne)
+                </button>
+                <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition-colors">
+                    Następne
+                </button>
+            </div>
+        </main>
+
+        <section id="result-screen" class="hidden bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-700 text-center">
+            <h2 class="text-3xl font-extrabold text-white mb-4">Koniec Testu!</h2>
+            <div class="text-6xl font-black text-blue-400 mb-4" id="score-percentage">75%</div>
+            <p class="text-gray-300 mb-6 text-lg" id="score-raw">Zdobyłeś 35 na 50 punktów.</p>
+            
+            <div id="surprise-box" class="hidden p-4 bg-gradient-to-r from-yellow-600 to-amber-500 rounded-lg text-white font-bold mb-6 animate-bounce">
+                🎉 NIESPODZIANKA! Wynik powyżej 65%! Jesteś na prostej drodze do zdania egzaminu! Otrzymujesz cyfrowy laur chirurga! 👑
+            </div>
+
+            <button id="retry-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                Wybierz inny egzamin
+            </button>
+        </section>
+
+        <section id="admin-panel" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="bg-gray-800 border border-gray-700 p-6 rounded-xl w-full max-w-2xl relative shadow-2xl">
+                <button id="close-admin" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
+                <h2 class="text-xl font-bold text-blue-400 mb-4">Panel Zarządzania i Inteligentny Konwerter Pytań</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-400 mb-1">Docelowy Egzamin (Identyfikator):</label>
+                    <input type="text" id="admin-exam-id" placeholder="np. 2026_A_1" class="w-full bg-gray-700 text-white p-2 rounded border border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-400 mb-1">Wklej surowy tekst (Pytanie, pod nim opcje, na końcu klucz np. "Odp: A" lub poprawna linijka):</label>
+                    <textarea id="admin-raw-text" rows="8" placeholder="Wklej tutaj treść zadań kopiowanych prosto z plików docx lub txt..." class="w-full bg-gray-700 text-white p-2 rounded border border-gray-600 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span id="admin-status" class="text-sm text-yellow-400"></span>
+                    <button id="upload-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition-colors">
+                        Konwertuj i Pushuj do Firebase
+                    </button>
                 </div>
             </div>
-            <div class="mt-12">
-                <button class="btn-outline" onclick="location.reload()">Wróć do Menu</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-modal">
-        <div class="glass-box w-full max-w-3xl m-4">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="accent font-bold text-2xl">Digital Asset Converter</h2>
-                <button class="text-white text-3xl hover:text-red-400" onclick="closeAdmin()">&times;</button>
-            </div>
-            <input type="text" id="admin-id" placeholder="Exam ID (e.g. 2026_A_1)" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl text-white mb-4 outline-none focus:border-green-400">
-            <textarea id="admin-raw" rows="10" placeholder="Wklej tekst (1. Pytanie... Opcja... Odp: X)" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl text-white text-xs font-mono mb-4 outline-none focus:border-green-400"></textarea>
-            <div class="flex justify-between items-center">
-                <span id="admin-status" class="text-sm text-yellow-400 font-bold">Awaiting input data...</span>
-                <button class="btn-consulting" onclick="startPush()">Push to Database</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="container mx-auto px-4 max-w-4xl mb-20 mt-10">
-        <div class="glass-box bg-slate-950 border border-slate-800">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                    <span class="accent">⚡</span> Repozytorium Kodu (index.html)
-                </h3>
-                <button onclick="copyCodeText()" class="btn-outline text-xs py-2 px-4">Kopiuj Kod</button>
-            </div>
-            <p class="text-sm opacity-60 mb-4">Poniżej znajduje się czysty kod źródłowy tej aplikacji. Możesz go w całości skopiować bez zaglądania do edytora.</p>
-            <textarea id="code-repository-box" readonly class="w-full h-48 bg-slate-900 text-slate-400 border border-slate-800 p-4 rounded-xl font-mono text-xs outline-none resize-none"></textarea>
-        </div>
+        </section>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Konfiguracja Twojej bazy Firebase dostarczona w zapytaniu
         const firebaseConfig = {
             apiKey: "AIzaSyDUlxtOEXNjaQ4-axL_urNg3wbvUxMtGy8",
             authDomain: "baza-neuro.firebaseapp.com",
@@ -249,167 +124,292 @@
             measurementId: "G-VD1GG66PDD"
         };
 
+        // Inicjalizacja Firebase & Firestore
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let questions = [];
-        let currentIndex = 0;
-        let userAnswers = {};
+        // Stan aplikacji
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // Indeks pytania -> indeks wybranej opcji
+        let flaggedQuestions = new Set();
 
-        // Auto-wstrzyknięcie kodu źródłowego do okienka kopiowania po załadowaniu strony
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("code-repository-box").value = document.documentElement.outerHTML;
-        });
+        // Elementy DOM
+        const selectionScreen = document.getElementById('selection-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const loadingScreen = document.getElementById('loading-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const adminPanel = document.getElementById('admin-panel');
+        
+        const examSelect = document.getElementById('exam-select');
+        const startBtn = document.getElementById('start-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressText = document.getElementById('progress-text');
+        const answeredCount = document.getElementById('answered-count');
+        const progressBar = document.getElementById('progress-bar');
+        
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const flagBtn = document.getElementById('flag-btn');
+        
+        // Obsługa uruchamiania testu (Pobieranie jednorazowe getDocs chroniące przed niechcianym przeładowywaniem w czasie rzeczywistym)
+        startBtn.addEventListener('click', async () => {
+            const selectedExam = examSelect.value;
+            if (!selectedExam) {
+                alert('Proszę wybrać egzamin z listy.');
+                return;
+            }
 
-        window.copyCodeText = () => {
-            const copyText = document.getElementById("code-repository-box");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(copyText.value);
-            alert("Kod został skopiowany do schowka!");
-        };
+            selectionScreen.classList.add('hidden');
+            loadingScreen.classList.remove('hidden');
 
-        window.showSlide = (id) => {
-            document.querySelectorAll('.slide-container').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        };
-
-        document.getElementById('start-btn').onclick = async () => {
-            const examId = document.getElementById('exam-select').value;
-            document.getElementById('start-btn').innerText = "Generowanie...";
-            
             try {
-                const snap = await getDocs(collection(db, `egzaminy/${examId}/pytania`));
-                questions = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                questions.sort((a,b) => (a.order || 0) - (b.order || 0));
-                
-                document.getElementById('start-btn').innerText = "Generuj Test";
-                if (questions.length === 0) return alert("Baza jest pusta. Użyj skrótu Ctrl+Shift+A aby dodać pytania.");
-                
-                currentIndex = 0;
+                // Pobieramy kolekcję odpowiadającą wybranemu roku/egzaminowi
+                const querySnapshot = await getDocs(collection(db, `egzaminy/${selectedExam}/pytania`));
+                currentQuestions = [];
+                querySnapshot.forEach((doc) => {
+                    currentQuestions.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sortowanie pytań, aby zapewnić, że żadne nie zostanie pominięte ani pomieszane
+                currentQuestions.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+                if (currentQuestions.length === 0) {
+                    alert('Brak pytań w tej bazie danych Firebase. Użyj Ctrl+Shift+A aby dodać nowe pytania.');
+                    loadingScreen.classList.add('hidden');
+                    selectionScreen.classList.remove('hidden');
+                    return;
+                }
+
+                // Reset stanu quizu
+                currentQuestionIndex = 0;
                 userAnswers = {};
+                flaggedQuestions.clear();
+                
+                loadingScreen.classList.add('hidden');
+                quizScreen.classList.remove('hidden');
                 renderQuestion();
-                showSlide('slide-quiz');
-            } catch (e) { 
-                alert("Błąd autoryzacji Firebase. Upewnij się, że zakładka Rules jest otwarta."); 
-                document.getElementById('start-btn').innerText = "Generuj Test";
-            }
-        };
 
-        function renderQuestion() {
-            const q = questions[currentIndex];
-            document.getElementById('q-counter').innerText = `${currentIndex + 1} / ${questions.length}`;
-            document.getElementById('progress-bar').style.width = `${((currentIndex + 1)/questions.length)*100}%`;
-            document.getElementById('q-text').innerText = `${currentIndex + 1}. ${q.text}`;
-            
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-            
-            q.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = `option-btn ${userAnswers[currentIndex] === idx ? 'selected' : ''}`;
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    userAnswers[currentIndex] = idx;
-                    renderQuestion();
-                };
-                container.appendChild(btn);
-            });
-
-            document.getElementById('next-btn').innerText = (currentIndex === questions.length - 1) ? "Zakończ" : "Następne";
-        }
-
-        window.nextQuestion = () => {
-            if (currentIndex < questions.length - 1) {
-                currentIndex++;
-                renderQuestion();
-            } else {
-                const totalAnswered = Object.keys(userAnswers).length;
-                if (totalAnswered < questions.length) {
-                    if (!confirm("Nie udzieliłeś odpowiedzi na wszystkie pytania. Czy na pewno chcesz zakończyć arkusz?")) return;
-                }
-                finishTest();
-            }
-        };
-
-        window.prevQuestion = () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderQuestion();
-            }
-        };
-
-        function finishTest() {
-            let correct = 0;
-            questions.forEach((q, idx) => {
-                if (userAnswers[idx] === q.correct) correct++;
-            });
-            
-            const percent = Math.round((correct / questions.length) * 100);
-            document.getElementById('final-percent').innerText = `${percent}%`;
-            document.getElementById('final-score').innerText = `Wynik: ${correct} z ${questions.length} punktów.`;
-            
-            if (percent >= 65) {
-                document.getElementById('result-status').innerText = "Status: POZYTYWNY";
-                document.getElementById('surprise-area').classList.remove('hidden');
-                confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
-            } else {
-                document.getElementById('result-status').innerText = "Status: NEGATYWNY";
-                document.getElementById('surprise-area').classList.add('hidden');
-            }
-            
-            showSlide('slide-result');
-        }
-
-        // Zabezpieczenia Backoffice (Shift+Ctrl+A)
-        window.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
-                e.preventDefault();
-                if (prompt("Wprowadź token dostępu administratora:") === "admin") {
-                    document.getElementById('admin-modal').style.display = 'flex';
-                }
+            } catch (error) {
+                console.error("Błąd pobierania danych: ", error);
+                alert("Nie udało się pobrać pytań z Firebase.");
+                loadingScreen.classList.add('hidden');
+                selectionScreen.classList.remove('hidden');
             }
         });
 
-        window.closeAdmin = () => document.getElementById('admin-modal').style.display = 'none';
+        // Renderowanie Pytania
+        function renderQuestion() {
+            if (currentQuestions.length === 0) return;
+            const q = currentQuestions[currentQuestionIndex];
 
-        window.startPush = async () => {
-            const id = document.getElementById('admin-id').value.trim();
-            const raw = document.getElementById('admin-raw').value;
-            const status = document.getElementById('admin-status');
-            
-            if (!id || !raw) return alert("Uzupełnij wymagane pola mapowania!");
-            
-            status.innerText = "Przetwarzanie danych strukturalnych...";
-            const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-            let parsed = [];
-            let current = null;
-            let order = 1;
+            // Aktualizacja paska postępu i upewnienie się o ciągłości
+            progressText.innerText = `Pytanie ${currentQuestionIndex + 1} z ${currentQuestions.length}`;
+            const totalAnswered = Object.keys(userAnswers).length;
+            const progressPercent = Math.round((totalAnswered / currentQuestions.length) * 100);
+            answeredCount.innerText = `Udzielone odpowiedzi: ${totalAnswered}/${currentQuestions.length} (${progressPercent}%)`;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
 
-            lines.forEach(line => {
-                if (/^\d+[\.\)]/.test(line)) {
-                    if (current) parsed.push(current);
-                    current = { text: line.replace(/^\d+[\.\)]\s*/, ''), options: [], correct: 0, order: order++ };
-                } else if (current) {
-                    if (line.toLowerCase().startsWith('odp:') || line.toLowerCase().startsWith('poprawna:')) {
-                        const letter = line.replace(/[^a-eA-E]/g, '').toUpperCase();
-                        current.correct = letter.charCodeAt(0) - 65;
-                    } else {
-                        current.options.push(line.replace(/^[A-Ea-e][\.\)\s]+/, ''));
+            // Treść pytania
+            questionText.innerText = `${currentQuestionIndex + 1}. ${q.text}`;
+
+            // Opcje odpowiedzi
+            optionsContainer.innerHTML = '';
+            q.options.forEach((option, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-lg border transition-all flex items-center justify-between text-sm sm:text-base `;
+                
+                // Sprawdzanie czy użytkownik już zaznaczył tę opcję
+                if (userAnswers[currentQuestionIndex] === idx) {
+                    btn.className += " bg-blue-900/50 border-blue-500 text-white font-medium ring-2 ring-blue-500/20";
+                } else {
+                    btn.className += " bg-gray-700/50 border-gray-600 hover:bg-gray-700 hover:border-gray-500 text-gray-200";
+                }
+
+                btn.innerText = option;
+                btn.addEventListener('click', () => selectOption(idx));
+                optionsContainer.appendChild(btn);
+            });
+
+            // Stan przycisku flagowania
+            if (flaggedQuestions.has(currentQuestionIndex)) {
+                flagBtn.innerText = "⭐ Sflagowane";
+                flagBtn.className = "text-yellow-400 font-bold text-sm flex items-center gap-1";
+            } else {
+                flagBtn.innerText = "☆ Flaguj (Trudne)";
+                flagBtn.className = "text-gray-400 hover:text-yellow-400 text-sm flex items-center gap-1";
+            }
+
+            // Stan przycisków nawigacji
+            prevBtn.disabled = currentQuestionIndex === 0;
+            if (currentQuestionIndex === currentQuestions.length - 1) {
+                nextBtn.innerText = "Zakończ Test";
+                nextBtn.className = "bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold transition-colors";
+            } else {
+                nextBtn.innerText = "Następne";
+                nextBtn.className = "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition-colors";
+            }
+        }
+
+        function selectOption(optionIdx) {
+            userAnswers[currentQuestionIndex] = optionIdx;
+            renderQuestion();
+        }
+
+        // Nawigacja
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                // Upewniamy się, czy użytkownik nie pominął żadnego pytania przed zakończeniem
+                const totalAnswered = Object.keys(userAnswers).length;
+                if (totalAnswered < currentQuestions.length) {
+                    const confirmEnd = confirm(`⚠️ Uwaga! Nie odpowiedziałeś na wszystkie pytania (Udzielone: ${totalAnswered} z ${currentQuestions.length}). Czy na pewno chcesz zakończyć test? Pomięte pytania zostaną uznane za błędne.`);
+                    if (!confirmEnd) return;
+                }
+                finishQuiz();
+            }
+        });
+
+        flagBtn.addEventListener('click', () => {
+            if (flaggedQuestions.has(currentQuestionIndex)) {
+                flaggedQuestions.delete(currentQuestionIndex);
+            } else {
+                flaggedQuestions.add(currentQuestionIndex);
+            }
+            renderQuestion();
+        });
+
+        // Podsumowanie i Niespodzianka dla wyniku > 65%
+        function finishQuiz() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            let correctCount = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] !== undefined) {
+                    const selectedText = q.options[userAnswers[idx]].toLowerCase();
+                    // Prosty walidator poprawności na podstawie pola 'correct' lub dopasowania tekstu klucza
+                    if (q.correct !== undefined && userAnswers[idx] === q.correct) {
+                        correctCount++;
                     }
                 }
             });
-            if (current) parsed.push(current);
 
-            try {
-                for (let i=0; i<parsed.length; i++) {
-                    status.innerText = `Pushing segment: ${i+1}/${parsed.length}...`;
-                    await setDoc(doc(collection(db, `egzaminy/${id}/pytania`)), parsed[i]);
+            const scorePercent = Math.round((correctCount / currentQuestions.length) * 100);
+            document.getElementById('score-percentage').innerText = `${scorePercent}%`;
+            document.getElementById('score-raw').innerText = `Zdobyłeś ${correctCount} na ${currentQuestions.length} punktów.`;
+
+            // Warunek niespodzianki (> 65%)
+            if (scorePercent >= 65) {
+                document.getElementById('surprise-box').classList.remove('hidden');
+                // Niespodzianka: Wystrzał konfetti na ekranie!
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                document.getElementById('surprise-box').classList.add('hidden');
+            }
+        }
+
+        document.getElementById('retry-btn').addEventListener('click', () => {
+            resultScreen.classList.add('hidden');
+            selectionScreen.classList.remove('hidden');
+        });
+
+
+        // ================= SECURITY & CONVERTER (Shift+Ctrl+A) =================
+
+        window.addEventListener('keydown', (e) => {
+            // Skrót klawiszowy aktywacyjny zadany przez użytkownika
+            if (e.shiftKey && e.ctrlKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                const password = prompt("Wprowadź hasło administratora bazy:");
+                if (password === "admin") {
+                    adminPanel.classList.remove('hidden');
+                } else if (password !== null) {
+                    alert("Niepoprawne hasło dostępu.");
                 }
-                status.innerText = "SUCCESS! Baza zsynchronizowana.";
-                document.getElementById('admin-raw').value = "";
-            } catch (err) { status.innerText = `ERROR: ${err.message}`; }
-        };
+            }
+        });
+
+        document.getElementById('close-admin').addEventListener('click', () => {
+            adminPanel.classList.add('hidden');
+        });
+
+        // Inteligentny parser/konwerter tekstu na obiekt bazy danych Firestore
+        document.getElementById('upload-btn').addEventListener('click', async () => {
+            const examId = document.getElementById('admin-exam-id').value.trim();
+            const rawText = document.getElementById('admin-raw-text').value;
+            const statusSpan = document.getElementById('admin-status');
+
+            if (!examId || !rawText) {
+                alert("Wypełnij identyfikator egzaminu oraz wklej zawartość!");
+                return;
+            }
+
+            statusSpan.innerText = "Przetwarzanie i konwersja...";
+
+            // Architektura parsera: Dzieli wklejony tekst na bloki pytań i wyodrębnia opcje
+            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            let questionsToUpload = [];
+            
+            let currentQ = null;
+            let orderCounter = 1;
+
+            // Przykład prostego i elastycznego podziału linii
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                // Jeśli linia zaczyna się cyfrą, traktujemy to jako nowe pytanie
+                if (/^\d+[\.\)]/.test(line)) {
+                    if (currentQ) questionsToUpload.push(currentQ);
+                    currentQ = {
+                        text: line.replace(/^\d+[\.\)]\s*/, ''),
+                        options: [],
+                        correct: 0, // Domyślnie pierwsza jako poprawna lub do dopasowania
+                        order: orderCounter++
+                    };
+                } else if (currentQ) {
+                    // Sprawdzanie czy linia jest oznaczeniem poprawnej odpowiedzi np. "Odp: A"
+                    if (line.toLowerCase().startsWith('odp:') || line.toLowerCase().startsWith('poprawna:')) {
+                        // Mapowanie literowe A=0, B=1, C=2 itp.
+                        const letter = line.replace(/[^a-eA-E]/g, '').toUpperCase();
+                        if (letter) currentQ.correct = letter.charCodeAt(0) - 65;
+                    } else {
+                        // Dodawanie jako opcja wyboru A, B, C, D lub E
+                        currentQ.options.push(line);
+                    }
+                }
+            }
+            if (currentQ) questionsToUpload.push(currentQ);
+
+            // Wrzucanie sparsowanych obiektów prosto do Firebase Firestore
+            try {
+                let uploadedCount = 0;
+                for (const q of questionsToUpload) {
+                    const docRef = doc(collection(db, `egzaminy/${examId}/pytania`));
+                    await setDoc(docRef, q);
+                    uploadedCount++;
+                }
+                statusSpan.innerText = `Sukces! Poprawnie skonwertowano i wgrano ${uploadedCount} pytań.`;
+                document.getElementById('admin-raw-text').value = "";
+            } catch (err) {
+                console.error(err);
+                statusSpan.innerText = "Błąd zapisu w strukturze Firestore.";
+            }
+        });
     </script>
 </body>
 </html>
