@@ -125,8 +125,9 @@
         };
 
         // Inicjalizacja Firebase & Firestore
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app, "baz2026"); // <-- POPRAWKA: Wskazujemy bazę "baz2026"
+
 
         // Stan aplikacji
         let currentQuestions = [];
