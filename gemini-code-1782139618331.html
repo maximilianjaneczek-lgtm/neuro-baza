@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKRYPT MAXA - Tester Baz Neurologicznych</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-blue-500 tracking-tight mb-2">NEURO-QUIZ</h1>
+            <p class="text-gray-400">Przeglądarka i tester pytań z egzaminów archiwalnych</p>
+        </header>
+
+        <section id="selection-screen" class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 mb-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-200">Wybierz bazę egzaminacyjną:</h2>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <select id="exam-select" class="bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1">
+                    <option value="">-- Wybierz egzamin --</option>
+                    <option value="2026_A_1">Neurologia 2026 Cykl A - I Termin</option>
+                    <option value="2026_A_2">Neurologia 2026 Cykl A - II Termin</option>
+                    <option value="2025_A_1">Neurologia 2025 Cykl A - I Termin</option>
+                    <option value="2025_B_1">Neurologia 2025 Cykl B - I Termin</option>
+                    <option value="2024_A_1">Neurologia 2024 Cykl A - I Termin</option>
+                    <option value="2024_A_2">Neurologia 2024 Cykl A - II Termin</option>
+                    <option value="2024_B_1">Neurologia 2024 Cykl B - I Termin</option>
+                    <option value="2023_B_1">Neurologia 2023 Cykl B - I Termin</option>
+                    <option value="Ankieta">Ankieta Neurologia</option>
+                </select>
+                <button id="start-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow">
+                    Rozpocznij Test
+                </button>
+            </div>
+        </section>
+
+        <div id="loading-screen" class="hidden text-center py-10">
+            <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-blue-500 rounded-full" role="status"></div>
+            <p class="text-gray-400 mt-2">Pobieranie pytań z bazy Firebase...</p>
+        </div>
+
+        <main id="quiz-screen" class="hidden bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+            <div class="flex justify-between items-center mb-4 text-sm text-gray-400">
+                <span id="progress-text">Pytanie 1 z 100</span>
+                <span id="answered-count" class="bg-gray-700 px-3 py-1 rounded-full text-blue-400">Postęp: 0%</span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-2 mb-6">
+                <div id="progress-bar" class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+
+            <div class="mb-6">
+                <p id="question-text" class="text-lg font-semibold text-white leading-relaxed"></p>
+            </div>
+
+            <div id="options-container" class="space-y-3 mb-6">
+                </div>
+
+            <div class="flex justify-between items-center border-t border-gray-700 pt-4">
+                <button id="prev-btn" class="bg-gray-700 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
+                    Poprzednie
+                </button>
+                <button id="flag-btn" class="text-yellow-500 hover:text-yellow-400 text-sm flex items-center gap-1">
+                    ⭐ Flaguj (Trudne)
+                </button>
+                <button id="next-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition-colors">
+                    Następne
+                </button>
+            </div>
+        </main>
+
+        <section id="result-screen" class="hidden bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-700 text-center">
+            <h2 class="text-3xl font-extrabold text-white mb-4">Koniec Testu!</h2>
+            <div class="text-6xl font-black text-blue-400 mb-4" id="score-percentage">75%</div>
+            <p class="text-gray-300 mb-6 text-lg" id="score-raw">Zdobyłeś 35 na 50 punktów.</p>
+            
+            <div id="surprise-box" class="hidden p-4 bg-gradient-to-r from-yellow-600 to-amber-500 rounded-lg text-white font-bold mb-6 animate-bounce">
+                🎉 NIESPODZIANKA! Wynik powyżej 65%! Jesteś na prostej drodze do zdania egzaminu! Otrzymujesz cyfrowy laur chirurga! 👑
+            </div>
+
+            <button id="retry-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                Wybierz inny egzamin
+            </button>
+        </section>
+
+        <section id="admin-panel" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="bg-gray-800 border border-gray-700 p-6 rounded-xl w-full max-w-2xl relative shadow-2xl">
+                <button id="close-admin" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
+                <h2 class="text-xl font-bold text-blue-400 mb-4">Panel Zarządzania i Inteligentny Konwerter Pytań</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-400 mb-1">Docelowy Egzamin (Identyfikator):</label>
+                    <input type="text" id="admin-exam-id" placeholder="np. 2026_A_1" class="w-full bg-gray-700 text-white p-2 rounded border border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-400 mb-1">Wklej surowy tekst (Pytanie, pod nim opcje, na końcu klucz np. "Odp: A" lub poprawna linijka):</label>
+                    <textarea id="admin-raw-text" rows="8" placeholder="Wklej tutaj treść zadań kopiowanych prosto z plików docx lub txt..." class="w-full bg-gray-700 text-white p-2 rounded border border-gray-600 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span id="admin-status" class="text-sm text-yellow-400"></span>
+                    <button id="upload-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition-colors">
+                        Konwertuj i Pushuj do Firebase
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Konfiguracja Twojej bazy Firebase dostarczona w zapytaniu
+        const firebaseConfig = {
+            apiKey: "AIzaSyDUlxtOEXNjaQ4-axL_urNg3wbvUxMtGy8",
+            authDomain: "baza-neuro.firebaseapp.com",
+            projectId: "baza-neuro",
+            storageBucket: "baza-neuro.firebasestorage.app",
+            messagingSenderId: "178416106866",
+            appId: "1:178416106866:web:d021a5f98027ac3ac3b1eb",
+            measurementId: "G-VD1GG66PDD"
+        };
+
+        // Inicjalizacja Firebase & Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Stan aplikacji
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // Indeks pytania -> indeks wybranej opcji
+        let flaggedQuestions = new Set();
+
+        // Elementy DOM
+        const selectionScreen = document.getElementById('selection-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const loadingScreen = document.getElementById('loading-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const adminPanel = document.getElementById('admin-panel');
+        
+        const examSelect = document.getElementById('exam-select');
+        const startBtn = document.getElementById('start-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressText = document.getElementById('progress-text');
+        const answeredCount = document.getElementById('answered-count');
+        const progressBar = document.getElementById('progress-bar');
+        
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const flagBtn = document.getElementById('flag-btn');
+        
+        // Obsługa uruchamiania testu (Pobieranie jednorazowe getDocs chroniące przed niechcianym przeładowywaniem w czasie rzeczywistym)
+        startBtn.addEventListener('click', async () => {
+            const selectedExam = examSelect.value;
+            if (!selectedExam) {
+                alert('Proszę wybrać egzamin z listy.');
+                return;
+            }
+
+            selectionScreen.classList.add('hidden');
+            loadingScreen.classList.remove('hidden');
+
+            try {
+                // Pobieramy kolekcję odpowiadającą wybranemu roku/egzaminowi
+                const querySnapshot = await getDocs(collection(db, `egzaminy/${selectedExam}/pytania`));
+                currentQuestions = [];
+                querySnapshot.forEach((doc) => {
+                    currentQuestions.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sortowanie pytań, aby zapewnić, że żadne nie zostanie pominięte ani pomieszane
+                currentQuestions.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+                if (currentQuestions.length === 0) {
+                    alert('Brak pytań w tej bazie danych Firebase. Użyj Ctrl+Shift+A aby dodać nowe pytania.');
+                    loadingScreen.classList.add('hidden');
+                    selectionScreen.classList.remove('hidden');
+                    return;
+                }
+
+                // Reset stanu quizu
+                currentQuestionIndex = 0;
+                userAnswers = {};
+                flaggedQuestions.clear();
+                
+                loadingScreen.classList.add('hidden');
+                quizScreen.classList.remove('hidden');
+                renderQuestion();
+
+            } catch (error) {
+                console.error("Błąd pobierania danych: ", error);
+                alert("Nie udało się pobrać pytań z Firebase.");
+                loadingScreen.classList.add('hidden');
+                selectionScreen.classList.remove('hidden');
+            }
+        });
+
+        // Renderowanie Pytania
+        function renderQuestion() {
+            if (currentQuestions.length === 0) return;
+            const q = currentQuestions[currentQuestionIndex];
+
+            // Aktualizacja paska postępu i upewnienie się o ciągłości
+            progressText.innerText = `Pytanie ${currentQuestionIndex + 1} z ${currentQuestions.length}`;
+            const totalAnswered = Object.keys(userAnswers).length;
+            const progressPercent = Math.round((totalAnswered / currentQuestions.length) * 100);
+            answeredCount.innerText = `Udzielone odpowiedzi: ${totalAnswered}/${currentQuestions.length} (${progressPercent}%)`;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+
+            // Treść pytania
+            questionText.innerText = `${currentQuestionIndex + 1}. ${q.text}`;
+
+            // Opcje odpowiedzi
+            optionsContainer.innerHTML = '';
+            q.options.forEach((option, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-lg border transition-all flex items-center justify-between text-sm sm:text-base `;
+                
+                // Sprawdzanie czy użytkownik już zaznaczył tę opcję
+                if (userAnswers[currentQuestionIndex] === idx) {
+                    btn.className += " bg-blue-900/50 border-blue-500 text-white font-medium ring-2 ring-blue-500/20";
+                } else {
+                    btn.className += " bg-gray-700/50 border-gray-600 hover:bg-gray-700 hover:border-gray-500 text-gray-200";
+                }
+
+                btn.innerText = option;
+                btn.addEventListener('click', () => selectOption(idx));
+                optionsContainer.appendChild(btn);
+            });
+
+            // Stan przycisku flagowania
+            if (flaggedQuestions.has(currentQuestionIndex)) {
+                flagBtn.innerText = "⭐ Sflagowane";
+                flagBtn.className = "text-yellow-400 font-bold text-sm flex items-center gap-1";
+            } else {
+                flagBtn.innerText = "☆ Flaguj (Trudne)";
+                flagBtn.className = "text-gray-400 hover:text-yellow-400 text-sm flex items-center gap-1";
+            }
+
+            // Stan przycisków nawigacji
+            prevBtn.disabled = currentQuestionIndex === 0;
+            if (currentQuestionIndex === currentQuestions.length - 1) {
+                nextBtn.innerText = "Zakończ Test";
+                nextBtn.className = "bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold transition-colors";
+            } else {
+                nextBtn.innerText = "Następne";
+                nextBtn.className = "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition-colors";
+            }
+        }
+
+        function selectOption(optionIdx) {
+            userAnswers[currentQuestionIndex] = optionIdx;
+            renderQuestion();
+        }
+
+        // Nawigacja
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                // Upewniamy się, czy użytkownik nie pominął żadnego pytania przed zakończeniem
+                const totalAnswered = Object.keys(userAnswers).length;
+                if (totalAnswered < currentQuestions.length) {
+                    const confirmEnd = confirm(`⚠️ Uwaga! Nie odpowiedziałeś na wszystkie pytania (Udzielone: ${totalAnswered} z ${currentQuestions.length}). Czy na pewno chcesz zakończyć test? Pomięte pytania zostaną uznane za błędne.`);
+                    if (!confirmEnd) return;
+                }
+                finishQuiz();
+            }
+        });
+
+        flagBtn.addEventListener('click', () => {
+            if (flaggedQuestions.has(currentQuestionIndex)) {
+                flaggedQuestions.delete(currentQuestionIndex);
+            } else {
+                flaggedQuestions.add(currentQuestionIndex);
+            }
+            renderQuestion();
+        });
+
+        // Podsumowanie i Niespodzianka dla wyniku > 65%
+        function finishQuiz() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            let correctCount = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] !== undefined) {
+                    const selectedText = q.options[userAnswers[idx]].toLowerCase();
+                    // Prosty walidator poprawności na podstawie pola 'correct' lub dopasowania tekstu klucza
+                    if (q.correct !== undefined && userAnswers[idx] === q.correct) {
+                        correctCount++;
+                    }
+                }
+            });
+
+            const scorePercent = Math.round((correctCount / currentQuestions.length) * 100);
+            document.getElementById('score-percentage').innerText = `${scorePercent}%`;
+            document.getElementById('score-raw').innerText = `Zdobyłeś ${correctCount} na ${currentQuestions.length} punktów.`;
+
+            // Warunek niespodzianki (> 65%)
+            if (scorePercent >= 65) {
+                document.getElementById('surprise-box').classList.remove('hidden');
+                // Niespodzianka: Wystrzał konfetti na ekranie!
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                document.getElementById('surprise-box').classList.add('hidden');
+            }
+        }
+
+        document.getElementById('retry-btn').addEventListener('click', () => {
+            resultScreen.classList.add('hidden');
+            selectionScreen.classList.remove('hidden');
+        });
+
+
+        // ================= SECURITY & CONVERTER (Shift+Ctrl+A) =================
+
+        window.addEventListener('keydown', (e) => {
+            // Skrót klawiszowy aktywacyjny zadany przez użytkownika
+            if (e.shiftKey && e.ctrlKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                const password = prompt("Wprowadź hasło administratora bazy:");
+                if (password === "admin") {
+                    adminPanel.classList.remove('hidden');
+                } else if (password !== null) {
+                    alert("Niepoprawne hasło dostępu.");
+                }
+            }
+        });
+
+        document.getElementById('close-admin').addEventListener('click', () => {
+            adminPanel.classList.add('hidden');
+        });
+
+        // Inteligentny parser/konwerter tekstu na obiekt bazy danych Firestore
+        document.getElementById('upload-btn').addEventListener('click', async () => {
+            const examId = document.getElementById('admin-exam-id').value.trim();
+            const rawText = document.getElementById('admin-raw-text').value;
+            const statusSpan = document.getElementById('admin-status');
+
+            if (!examId || !rawText) {
+                alert("Wypełnij identyfikator egzaminu oraz wklej zawartość!");
+                return;
+            }
+
+            statusSpan.innerText = "Przetwarzanie i konwersja...";
+
+            // Architektura parsera: Dzieli wklejony tekst na bloki pytań i wyodrębnia opcje
+            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            let questionsToUpload = [];
+            
+            let currentQ = null;
+            let orderCounter = 1;
+
+            // Przykład prostego i elastycznego podziału linii
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                // Jeśli linia zaczyna się cyfrą, traktujemy to jako nowe pytanie
+                if (/^\d+[\.\)]/.test(line)) {
+                    if (currentQ) questionsToUpload.push(currentQ);
+                    currentQ = {
+                        text: line.replace(/^\d+[\.\)]\s*/, ''),
+                        options: [],
+                        correct: 0, // Domyślnie pierwsza jako poprawna lub do dopasowania
+                        order: orderCounter++
+                    };
+                } else if (currentQ) {
+                    // Sprawdzanie czy linia jest oznaczeniem poprawnej odpowiedzi np. "Odp: A"
+                    if (line.toLowerCase().startsWith('odp:') || line.toLowerCase().startsWith('poprawna:')) {
+                        // Mapowanie literowe A=0, B=1, C=2 itp.
+                        const letter = line.replace(/[^a-eA-E]/g, '').toUpperCase();
+                        if (letter) currentQ.correct = letter.charCodeAt(0) - 65;
+                    } else {
+                        // Dodawanie jako opcja wyboru A, B, C, D lub E
+                        currentQ.options.push(line);
+                    }
+                }
+            }
+            if (currentQ) questionsToUpload.push(currentQ);
+
+            // Wrzucanie sparsowanych obiektów prosto do Firebase Firestore
+            try {
+                let uploadedCount = 0;
+                for (const q of questionsToUpload) {
+                    const docRef = doc(collection(db, `egzaminy/${examId}/pytania`));
+                    await setDoc(docRef, q);
+                    uploadedCount++;
+                }
+                statusSpan.innerText = `Sukces! Poprawnie skonwertowano i wgrano ${uploadedCount} pytań.`;
+                document.getElementById('admin-raw-text').value = "";
+            } catch (err) {
+                console.error(err);
+                statusSpan.innerText = "Błąd zapisu w strukturze Firestore.";
+            }
+        });
+    </script>
+</body>
+</html>
